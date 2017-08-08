@@ -38,13 +38,14 @@ void	read_fill(t_fill *fill)
 	int y_m;
 	int y_e;
   char **tmp;
-  int a;
+//  int a;
 
 	y_m = -1;
 	y_e = -1;
-	while (get_next_line(STDIN, &str))
+	count = -1;
+  while (42)
 	{
-    count = -1;
+    get_next_line(STDIN, &str);
     printf("str = %s\n", str);
     ++count;
 		if (count == 0)
@@ -56,10 +57,10 @@ void	read_fill(t_fill *fill)
 			fill->m_w = ft_atoi(tmp[1]);
 			fill->map = (t_map *)malloc(sizeof(t_map) * (fill->m_h * fill->m_w));
 			fill->count = -1;
-      a = -1;
-      while (tmp[++a] != NULL)
-        free(tmp[a]);
-      free(tmp);
+//      a = -1;
+//     while (tmp[++a] != NULL)
+//        free(tmp[a]);
+//      free(tmp);
 		}
 		else if (fill->m_h >= (count - 2))
 			read_map(fill, str, ++y_m);
@@ -70,15 +71,15 @@ void	read_fill(t_fill *fill)
 			fill->e_w = ft_atoi(tmp[0]);
 			fill->elem = (t_elem *)malloc(sizeof(t_elem) * (fill->e_h * fill->e_w));
 			fill->count = -1;
-      a = -1;
-      while (tmp[++a] != NULL)
-        free(tmp[a]);
-      free(tmp);
-		}
+//      a = -1;
+//      while (tmp[++a] != NULL)
+//        free(tmp[a]);
+//      free(tmp);
+    }
 		else
 			read_elem(fill, str, ++y_e);
-		free(str);
-	}
+//	  free(str);
+  }
 }
 
 int		main()
