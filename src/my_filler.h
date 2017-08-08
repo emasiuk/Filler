@@ -9,22 +9,6 @@
 # include "libft/libft.h"
 # define STDIN 0
 
-
-typedef struct      s_map
-{
-    int     x;
-    int     y;
-    int     val;
-}                   t_map;
-
-typedef struct      s_elem
-{
-    int     x;
-    int     y;
-    char    val;
-
-}                   t_elem;
-
 typedef struct      s_fill
 {
     int     m_h;
@@ -32,9 +16,11 @@ typedef struct      s_fill
     int     e_h;
     int     e_w;
     char    my_symb;
-    t_elem  *elem;
-    t_map   *map;
+    char  **elem;
+    char   **map;
     int     count;
 }                 t_fill;
+
+void               read_all(t_fill *fill);
 
 #endif

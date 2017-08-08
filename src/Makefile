@@ -4,7 +4,8 @@ FLAGS = -Wall -Wextra -Werror -g -O3
 
 LIB = libft/libft.a
 
-SRCS =	filler.c
+SRCS =	filler.c		\
+			read.c
 
 BINS = $(SRCS:.c=.o)
 
