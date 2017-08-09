@@ -2,31 +2,6 @@
 
 void	find_size_map(char *str, t_fill *fill)
 {
-	// char	*numstr;
-	// int		i;
-	// int		f;
-    //
-	// i = -1;
-	// f = 0;
-	// while ((*str)[++i])
-	// {
-	// 	if (ft_isdigit((*str)[i]) && f == 0)
-	// 	{
-	// 		numstr = find_num((*str) + i);
-	// 		*row = ft_atoi(numstr);
-	// 		i += ft_strlen(numstr);
-	// 		f = 1;
-	// 		continue ;
-	// 	}
-	// 	if (ft_isdigit((*str)[i]) && f == 1)
-	// 	{
-	// 		numstr = find_num((*str) + i);
-	// 		*col = ft_atoi(numstr);
-	// 		break ;
-	// 	}
-	// }
-
-    printf("AAAAAAAAA\n");
     char **tmp;
     int i;
 
@@ -94,9 +69,7 @@ void	read_map(t_fill *fill, char *str)
 	i = -1;
 	while (++i < fill->m_h)
 	{
-        printf("1\n");
 		get_next_line(0, &str);
-        printf("2\n");
 //		find_crd(fill, (*str) + 4, i);
         // printf("%s\n", str);
         j = -1;
@@ -105,6 +78,7 @@ void	read_map(t_fill *fill, char *str)
 			fill->map[i][j] = str[j];
 			// fill->map[i][j].weight = 0;
 		}
+        fill->map[i][j] = '\0';
 		free(str);
 	}
 }
@@ -119,9 +93,7 @@ void	read_piece(t_fill *fill, char *str)
 	i = -1;
 	while (++i < fill->e_h)
 	{
-        // printf("1\n");
 		get_next_line(0, &str);
-        // printf("2\n");
 		ft_strcpy(fill->elem[i], str);
 		free(str);
 	}
@@ -132,20 +104,17 @@ void	read_all(t_fill *fill)
     char    *str;
 
     (get_next_line(0, &str)) ? fill->my_symb = str[0] : 0;
-	(get_next_line(0, &str) > 0) ? read_map(fill, str) : 0;
-	(get_next_line(0, &str) > 0) ? read_piece(fill, str) : 0;
-	// if (get_next_line(0, &str) > 0)
-	// 	read_map(fill, str);
-	// if (get_next_line(0, &str) > 0)
-	// 	read_piece(fill, str);
-
+    (get_next_line(0, &str) > 0) ? read_map(fill, str) : 0;
+    (get_next_line(0, &str) > 0) ? read_piece(fill, str) : 0;
     int i;
 
     i = -1;
+    printf("my_symb = %c\n", fill->my_symb);
     printf("MAP\n");
     while (++i < fill->m_h)
         printf("%s\n", fill->map[i]);
     i = -1;
+    printf("ELEM\n");
     while (++i < fill->e_h)
         printf("%s\n", fill->elem[i]);
 

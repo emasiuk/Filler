@@ -1,92 +1,148 @@
 #include "my_filler.h"
 #include "libft/libft.h"
+//
+//void        find_near_enemy(t_fill *fill)
+//{
+//    int     i;
+//    int     j;
+//
+//    i = -1;
+//    j = -1;
+//    while (++i < fill->m_h)
+//    {
+//        while (++j < fill->m_w)
+//        {
+//            if (fill->map[i][j] != fill->my_symb && fill->map[i][j] != '.')
 
-// void	read_elem(t_fill *fill, char *str, int y)
-// {
-// 	int i;
-// 	int x;
-//
-// 	i = -1;
-// 	x = -1;
-// 	while (str[++i])
-// 	{
-// 		fill->elem[++fill->count].x = ++x;
-// 		fill->elem[++fill->count].y = y;
-// 		fill->elem[++fill->count].val = str[i];
-// 	}
-// }
-//
-// void	read_map(t_fill *fill, char *str, int y)
-// {
-// 	int		i;
-// 	int		x;
-//
-// 	x = -1;
-// 	i = -1;
-// 	while (str[++i])
-// 	{
-// 		fill->map[++fill->count].x = ++x;
-// 		fill->map[++fill->count].y = y;
-// 		fill->map[++fill->count].val = str[i];
-// 	}
-// }
-//
-// void	read_fill(t_fill *fill)
-// {
-// 	char *str;
-// 	int count;
-// 	int y_m;
-// 	int y_e;
-//   char **tmp;
-// //  int a;
-//
-// 	y_m = -1;
-// 	y_e = -1;
-// 	count = -1;
-//   while (42)
-// 	{
-//     get_next_line(STDIN, &str);
-//     printf("str = %s\n", str);
-//     ++count;
-// 		if (count == 0)
-// 			fill->my_symb = str[0];
-// 		else if (count == 1)
-// 		{
-//       		tmp = ft_strsplit(str, ' ');
-// 			fill->m_h = ft_atoi(tmp[0]);
-// 			fill->m_w = ft_atoi(tmp[1]);
-// 			fill->map = (t_map *)malloc(sizeof(t_map) * (fill->m_h * fill->m_w));
-// 			fill->count = -1;
-// 		 	a = -1;
-// 			while (tmp[++a] != NULL)
-// 		   		free(tmp[a]);
-// 		 	free(tmp);
-// 		}
-// 		else if (fill->m_h >= (count - 2))
-// 			read_map(fill, str, ++y_m);
-// 		else if (count == (fill->m_h + 3))
-// 		{
-//       		tmp = ft_strsplit(str, ' ');
-// 			fill->e_h = ft_atoi(tmp[0]);
-// 			fill->e_w = ft_atoi(tmp[0]);
-// 			fill->elem = (t_elem *)malloc(sizeof(t_elem) * (fill->e_h * fill->e_w));
-// 			fill->count = -1;
-//      a = -1;
-//      while (tmp[++a] != NULL)
-//        free(tmp[a]);
-//      free(tmp);
-//     }
-// 		else
-// 			read_elem(fill, str, ++y_e);
-// 	  free(str);
-//   }
-// }
+//        }
+//    }
+//}
 
-int		main()
+int         check_pos(t_fill *fill, int i, int j)
 {
-	t_fill *fill;
+    int     r;
+    int     c;
+
+    r = -1;
+    while (++r < fill->e_h)
+    {
+        c = -1;
+        while (++c < fill->e_w)
+        {
+            if (fill->elem[r][c] != '.' && fill->map[i + r][j + c] != '.')
+                return (0);
+        }
+    }
+    return (1);
+}
+
+int         check_touch(t_fill *fill, int i, int j)
+{
+    int     r;
+    int     c;
+  
+    r = -1;
+    while (fill->elem[++r])
+    {
+        c = -1;
+        while (fill->elem[r][++c])
+        {
+            if (i == 0 && r == 0)
+            {
+                if (fill->elem[r][c] != '.' &&
+               (fill->map[i + r][j + c] == fill->my_symb ||
+                fill->map[i + r + 1][j + c] == fill->my_symb ||
+                fill->map[i + r][j + c - 1] == fill->my_symb ||
+                fill->map[i + r][j + c + 1] == fill->my_symb))
+                return (1);
+            }
+            else if (j == 0 && c == 0)
+            {
+                if (fill->elem[r][c] != '.' &&
+               (fill->map[i + r - 1][j + c] == fill->my_symb ||
+                fill->map[i + r + 1][j + c] == fill->my_symb ||
+                fill->map[i + r][j + c] == fill->my_symb ||
+                fill->map[i + r][j + c + 1] == fill->my_symb))
+                return (1);
+            }
+                
+            else
+            if (fill->elem[r][c] != '.' &&
+               (fill->map[i + r - 1][j + c] == fill->my_symb ||
+                fill->map[i + r + 1][j + c] == fill->my_symb ||
+                fill->map[i + r][j + c - 1] == fill->my_symb ||
+                fill->map[i + r][j + c + 1] == fill->my_symb))
+                return (1);
+        }
+    }
+    return (0);
+}
+
+void        tupik(t_fill *fill)
+{
+
+    int     i;
+    int     j;
+
+    i = -1;
+    while (++i < (fill->m_h - fill->e_h))
+    {
+        j = -1;
+        while (++j < (fill->m_w - fill->e_w))
+        {
+            if (check_pos(fill, i, j) && check_touch(fill, i, j))
+                dprintf(1, "%d %d", i, j);   
+        }
+    }
+}
+
+
+void        read_input(t_fill *fill)
+{
+    fd_set rfds;
+    fd_set wfds;
+//    int ret;
+
+    while (42)
+    {
+        FD_ZERO(&rfds);
+        FD_ZERO(&wfds);
+        if (fill->status == READ)
+            FD_SET(0, &rfds);
+        else
+            FD_SET(1, &wfds);
+
+        select(2, &rfds, &wfds, NULL, NULL);
+
+        if (FD_ISSET(0, &rfds))
+        {
+            read_all(fill);
+            fill->status = WRITE;
+        }
+
+        if (FD_ISSET(1, &wfds))
+        {
+            tupik(fill);
+            fill->status = READ;
+        }
+    }
+}
+
+
+
+
+
+
+
+int         main()
+{
+	t_fill  *fill;
 
 	fill = (t_fill *)malloc(sizeof(t_fill));
-	read_all(fill);
-	return (0);
+    fill->status = READ;
+    read_input(fill);
+//    read_all(fill);
+//    tupik(fill);
+    //    find_near_enemy(fill);
+    return (0);
 }
