@@ -40,7 +40,7 @@ int         check_touch(t_fill *fill, int i, int j)
 {
     int     r;
     int     c;
-  
+
     r = -1;
     while (fill->elem[++r])
     {
@@ -65,7 +65,7 @@ int         check_touch(t_fill *fill, int i, int j)
                 fill->map[i + r][j + c + 1] == fill->my_symb))
                 return (1);
             }
-                
+
             else
             if (fill->elem[r][c] != '.' &&
                (fill->map[i + r - 1][j + c] == fill->my_symb ||
@@ -91,18 +91,48 @@ void        tupik(t_fill *fill)
         while (++j < (fill->m_w - fill->e_w))
         {
             if (check_pos(fill, i, j) && check_touch(fill, i, j))
-                dprintf(1, "%d %d", i, j);   
+            {
+                dprintf(1, "%d %d ", i, j);
+                fill->status = READ;
+                return ;
+            }
         }
     }
 }
 
+void        free_struct(t_fill *fill)
+{
+    int     i;
+
+    i  = -1;
+    if (fill->map)
+        while (++i < fill->m_h)
+            free(fill->map[i]);
+        free(fill->map);
+
+    i = -1;
+    if (fill->elem)
+        while (++i < fill->e_h)
+            free(fill->elem[i]);
+        free(fill->elem);
+    //
+    // if (fill->my_symb)
+    //     fill->my_symb = NULL;
+}
 
 void        read_input(t_fill *fill)
 {
     fd_set rfds;
     fd_set wfds;
-//    int ret;
+    int flags;
+    FILE *logger;
 
+    logger = fopen("filler.log", "w");
+    fprintf(logger, "Start game\n");
+    fclose(logger);
+
+    flags = fcntl(0, F_GETFL, 0);
+    fcntl(0, F_SETFL, flags | O_NONBLOCK);
     while (42)
     {
         FD_ZERO(&rfds);
@@ -123,16 +153,10 @@ void        read_input(t_fill *fill)
         if (FD_ISSET(1, &wfds))
         {
             tupik(fill);
-            fill->status = READ;
+            free_struct(fill);
         }
     }
 }
-
-
-
-
-
-
 
 int         main()
 {

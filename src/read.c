@@ -60,24 +60,24 @@ void	read_map(t_fill *fill, char *str)
 {
 	int		i;
 	int		j;
+    FILE    *logger;
 
+    logger = fopen("filler.log", "a");
+    fprintf(logger, "%s\n", str);
+    fclose(logger);
 	find_size_map(str,fill);
 	free(str);
 	mem_for_map(fill);
-	// get_next_line(0, &str);
-	// free(*str);
 	i = -1;
 	while (++i < fill->m_h)
 	{
 		get_next_line(0, &str);
-//		find_crd(fill, (*str) + 4, i);
-        // printf("%s\n", str);
+        logger = fopen("filler.log", "a");
+        fprintf(logger, "%s\n", str);
+        fclose(logger);
         j = -1;
 		while (++j < fill->m_w)
-		{
 			fill->map[i][j] = str[j];
-			// fill->map[i][j].weight = 0;
-		}
         fill->map[i][j] = '\0';
 		free(str);
 	}
@@ -86,14 +86,21 @@ void	read_map(t_fill *fill, char *str)
 void	read_piece(t_fill *fill, char *str)
 {
 	int		i;
+    FILE *logger;
 
 	find_size_elem(str, fill);
+    logger = fopen("filler.log", "a");
+    fprintf(logger, "%s\n", str);
+    fclose(logger);
 	free(str);
 	mem_for_piece(fill);
 	i = -1;
 	while (++i < fill->e_h)
 	{
 		get_next_line(0, &str);
+        logger = fopen("filler.log", "a");
+        fprintf(logger, "%s\n", str);
+        fclose(logger);;
 		ft_strcpy(fill->elem[i], str);
 		free(str);
 	}
@@ -104,18 +111,19 @@ void	read_all(t_fill *fill)
     char    *str;
 
     (get_next_line(0, &str)) ? fill->my_symb = str[0] : 0;
+    free(str);
     (get_next_line(0, &str) > 0) ? read_map(fill, str) : 0;
     (get_next_line(0, &str) > 0) ? read_piece(fill, str) : 0;
-    int i;
+    // int i;
 
-    i = -1;
-    printf("my_symb = %c\n", fill->my_symb);
-    printf("MAP\n");
-    while (++i < fill->m_h)
-        printf("%s\n", fill->map[i]);
-    i = -1;
-    printf("ELEM\n");
-    while (++i < fill->e_h)
-        printf("%s\n", fill->elem[i]);
+    // i = -1;
+    // printf("my_symb = %c\n", fill->my_symb);
+    // printf("MAP\n");
+    // while (++i < fill->m_h)
+    //     printf("%s\n", fill->map[i]);
+    // i = -1;
+    // printf("ELEM\n");
+    // while (++i < fill->e_h)
+    //     printf("%s\n", fill->elem[i]);
 
 }
