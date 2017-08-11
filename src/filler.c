@@ -20,62 +20,38 @@
 
 int         check_pos(t_fill *fill, int i, int j)
 {
-    int     r;
-    int     c;
-
-    r = -1;
-    while (++r < fill->e_h)
-    {
-        c = -1;
-        while (++c < fill->e_w)
-        {
-            if (fill->elem[r][c] != '.' && fill->map[i + r][j + c] != '.')
-                return (0);
-        }
-    }
-    return (1);
+    for (int r = 0; r < fill->e_h; r++)
+        for(int c = 0; c < fill->e_w; c++)
+            if (fill->elem[r][c] == '*')
+            {
+                if (i + r < fill->m_h && j + c < fill->m_w)
+                {
+                    if (fill->map[i + r][j + c] != '.')
+                        return (-1);
+                }
+                else
+                    return (-1);
+            }
+    return (0);
 }
+
 
 int         check_touch(t_fill *fill, int i, int j)
 {
-    int     r;
-    int     c;
-
-    r = -1;
-    while (fill->elem[++r])
-    {
-        c = -1;
-        while (fill->elem[r][++c])
-        {
-            if (i == 0 && r == 0)
+    for (int r = 0; r < fill->e_h; r++)
+        for (int c = 0; c < fill->e_w; c++)
+            if (fill->elem[r][c] != '.')
             {
-                if (fill->elem[r][c] != '.' &&
-               (fill->map[i + r][j + c] == fill->my_symb ||
-                fill->map[i + r + 1][j + c] == fill->my_symb ||
-                fill->map[i + r][j + c - 1] == fill->my_symb ||
-                fill->map[i + r][j + c + 1] == fill->my_symb))
-                return (1);
+                if (i + r + 1 < fill->m_h && fill->map[i +r + 1][j + c] == fill->my_symb)
+                    return (0);
+                if (j + c +1 < fill->m_w && fill->map[i +r][j + c + 1] == fill->my_symb)
+                    return (0);
+                if (i + r - 1 >= 0 && fill->map[i +r - 1][j + c] == fill->my_symb)
+                    return (0);
+                if (j + c - 1 >= 0 && fill->map[i +r][j + c - 1] == fill->my_symb)
+                    return (0);
             }
-            else if (j == 0 && c == 0)
-            {
-                if (fill->elem[r][c] != '.' &&
-               (fill->map[i + r - 1][j + c] == fill->my_symb ||
-                fill->map[i + r + 1][j + c] == fill->my_symb ||
-                fill->map[i + r][j + c] == fill->my_symb ||
-                fill->map[i + r][j + c + 1] == fill->my_symb))
-                return (1);
-            }
-
-            else
-            if (fill->elem[r][c] != '.' &&
-               (fill->map[i + r - 1][j + c] == fill->my_symb ||
-                fill->map[i + r + 1][j + c] == fill->my_symb ||
-                fill->map[i + r][j + c - 1] == fill->my_symb ||
-                fill->map[i + r][j + c + 1] == fill->my_symb))
-                return (1);
-        }
-    }
-    return (0);
+    return (-1);
 }
 
 void        tupik(t_fill *fill)
@@ -84,43 +60,63 @@ void        tupik(t_fill *fill)
     int     i;
     int     j;
 
-    i = -1;
-    while (++i < (fill->m_h - fill->e_h))
+    i = 0;
+    while (i < (fill->m_h))
     {
-        j = -1;
-        while (++j < (fill->m_w - fill->e_w))
+        j = 0;
+        while (j < (fill->m_w))
         {
-            if (check_pos(fill, i, j) && check_touch(fill, i, j))
+            if (!check_pos(fill, i, j) && !check_touch(fill, i, j))
             {
-                dprintf(1, "%d %d ", i, j);
+                dprintf(1, "%d %d", j, i);
                 fill->status = READ;
                 return ;
             }
+            j++;
         }
+        i++;
     }
 }
 
 void        free_struct(t_fill *fill)
 {
+    FILE *logger;
+    logger = fopen("filler.log", "a");
+    fprintf(logger, "free\n");
+    fclose(logger);
+
     int     i;
 
     i  = -1;
     if (fill->map)
-        while (++i < fill->m_h)
+    {
+      while (++i < fill->m_h)
             free(fill->map[i]);
         free(fill->map);
-
+    }
+    fill->map = NULL;
     i = -1;
-    if (fill->elem)
+    if (fill->elem[0])
+    {
         while (++i < fill->e_h)
             free(fill->elem[i]);
         free(fill->elem);
+    }
+    free(fill->string->str);
+    free(fill->string);
+    fill->string = NULL;
+    fill->elem = NULL;
+    fill = (t_fill *)malloc(sizeof(t_fill));
+//    logger = fopen("filler.log", "a");
+//    fprintf(logger, "%s\n", fill->map[1]);
+//    fclose(logger);
+ 
     //
     // if (fill->my_symb)
     //     fill->my_symb = NULL;
 }
 
-void        read_input(t_fill *fill)
+void        read_input1(t_fill *fill)
 {
     fd_set rfds;
     fd_set wfds;
@@ -148,12 +144,18 @@ void        read_input(t_fill *fill)
         {
             read_all(fill);
             fill->status = WRITE;
+            logger = fopen("filler.log", "a");
+            fprintf(logger, "read\n");
+            fclose(logger);
         }
 
         if (FD_ISSET(1, &wfds))
         {
             tupik(fill);
             free_struct(fill);
+            logger = fopen("filler.log", "a");
+            fprintf(logger, "write\n");
+            fclose(logger);
         }
     }
 }
@@ -164,7 +166,7 @@ int         main()
 
 	fill = (t_fill *)malloc(sizeof(t_fill));
     fill->status = READ;
-    read_input(fill);
+    read_input1(fill);
 //    read_all(fill);
 //    tupik(fill);
     //    find_near_enemy(fill);
