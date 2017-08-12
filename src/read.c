@@ -72,7 +72,7 @@ int         find_size(char *dist, char *source, int start)
   return end - 1;
 }
 
-void        parse_size(char *line, t_fill *fill, char *str)
+void        parse_size(char *line, t_fill *fill, int flag)
 {
   int       i;
   int       size;
@@ -90,12 +90,12 @@ void        parse_size(char *line, t_fill *fill, char *str)
 
   left = strncpy(left, line, i);
   right = strcpy(right, line + i + 1);
-  if (ft_strcmp(str, "map"))
+  if (flag)
   {
     fill->e_h = ft_atoi(left);
     fill->e_w = ft_atoi(right);
   }
-  if (ft_strcmp(str, "elem"))
+  else
   {
       fill->m_h = ft_atoi(left);
       fill->m_w = ft_atoi(right);
@@ -111,6 +111,7 @@ int        read_is_fin(t_str *s,t_fill *fill)
     int     size;
     int     elem_pos;
     char    arr_elem_size[32];
+    FILE    *logger;
 
     i = 0;
     elem_pos = -1;
@@ -137,7 +138,8 @@ int        read_is_fin(t_str *s,t_fill *fill)
             else
             {
                 find_size(arr_elem_size, s->str, elem_pos);
-                parse_size(arr_elem_size, fill, "map");
+
+                parse_size(arr_elem_size, fill, 1);
                 if (s->size <= i + fill->e_h*(fill->e_w + 1))
                     return (0);
                 else
@@ -152,6 +154,7 @@ void        read_input(t_fill *fill)
 {
     char    str[BUFF_SIZE];
     int     r;
+    FILE    *logger;
 
     r = 0;
 
@@ -166,6 +169,13 @@ void        read_input(t_fill *fill)
             string_append(fill->string, str);
         if (r <= 0)
         {
+            if (fill->string->size < 200)
+            {
+                logger = fopen("filler.log", "a");
+                fprintf(logger, "size = %d\n", fill->string->size);
+                fprintf(logger, "string = %s\n", fill->string->str);
+                fclose(logger);
+            }
             break ;
         }
     }
@@ -253,14 +263,14 @@ void        parse_all(char *string, t_fill *fill)
     fill->my_symb = string[0];
     memset(str, '\0', 32);
     pos += find_size(str, string, pos);
-    parse_size(str, fill, "map");
+    parse_size(str, fill, 0);
     read_map(fill, string, pos);
 
     pos += fill->m_h * (fill->m_w + 1);
 
     pos = find_size(str, string, pos) + 2;
 
-    parse_size(str, fill, "elem");
+    parse_size(str, fill, 1);
     read_elem(fill, string, pos);
 }
 

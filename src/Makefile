@@ -1,6 +1,6 @@
 NAME = filler
 
-FLAGS = -Wall -Wextra -Werror -g -O3
+FLAGS = -Wall -Wextra -g -O3
 
 LIB = libft/libft.a
 
