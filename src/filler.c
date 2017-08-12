@@ -56,7 +56,7 @@ int         check_touch(t_fill *fill, int i, int j)
 
 void        tupik(t_fill *fill)
 {
-
+    FILE    *logger;
     int     i;
     int     j;
 
@@ -68,6 +68,9 @@ void        tupik(t_fill *fill)
         {
             if (!check_pos(fill, i, j) && !check_touch(fill, i, j))
             {
+                logger = fopen("filler.log", "a");
+                fprintf(logger, "%d %d\n", j, i);
+                fclose(logger);
                 dprintf(1, "%d %d", j, i);
                 fill->status = READ;
                 return ;
@@ -76,6 +79,9 @@ void        tupik(t_fill *fill)
         }
         i++;
     }
+    logger = fopen("filler.log", "a");
+    fprintf(logger, "end tupik\n");
+    fclose(logger);
 }
 
 void        free_struct(t_fill *fill)
@@ -110,7 +116,7 @@ void        free_struct(t_fill *fill)
 //    logger = fopen("filler.log", "a");
 //    fprintf(logger, "%s\n", fill->map[1]);
 //    fclose(logger);
- 
+
     //
     // if (fill->my_symb)
     //     fill->my_symb = NULL;
@@ -142,20 +148,26 @@ void        read_input1(t_fill *fill)
 
         if (FD_ISSET(0, &rfds))
         {
+            logger = fopen("filler.log", "a");
+            fprintf(logger, "read\n");
+            fclose(logger);
             read_all(fill);
             fill->status = WRITE;
             logger = fopen("filler.log", "a");
-            fprintf(logger, "read\n");
+            fprintf(logger, "end read\n");
             fclose(logger);
         }
 
         if (FD_ISSET(1, &wfds))
         {
-            tupik(fill);
-            free_struct(fill);
             logger = fopen("filler.log", "a");
             fprintf(logger, "write\n");
             fclose(logger);
+            tupik(fill);
+            logger = fopen("filler.log", "a");
+            fprintf(logger, "end write\n");
+            fclose(logger);
+            free_struct(fill);
         }
     }
 }

@@ -201,6 +201,7 @@ void    mem_for_elem(t_fill *fill)
 void        read_elem(t_fill *fill, char *string, int pos)
 {
 //    printf("pos = %d\n", pos);
+    FILE *logger;
     int     i;
     int     j;
 
@@ -215,12 +216,16 @@ void        read_elem(t_fill *fill, char *string, int pos)
             pos++;
         }
         fill->elem[i][fill->e_w] = '\0';
+        logger = fopen("filler.log", "a");
+        fprintf(logger, "%s\n", fill->elem[i]);
+        fclose(logger);
         pos++;
     }
 }
 
 void        read_map(t_fill *fill, char *string, int pos)
 {
+    FILE    *logger;
     int     i;
     int     j;
 
@@ -230,10 +235,11 @@ void        read_map(t_fill *fill, char *string, int pos)
     {
         j = -1;
         while (++j < fill->m_w)
-        {
             fill->map[i][j] = string[pos++];
-        }
         fill->map[i][fill->m_w] = '\0';
+        logger = fopen("filler.log", "a");
+        fprintf(logger, "%s\n", fill->map[i]);
+        fclose(logger);
         pos++;
     }
 }
@@ -249,7 +255,7 @@ void        parse_all(char *string, t_fill *fill)
     pos += find_size(str, string, pos);
     parse_size(str, fill, "map");
     read_map(fill, string, pos);
-    
+
     pos += fill->m_h * (fill->m_w + 1);
 
     pos = find_size(str, string, pos) + 2;
@@ -260,23 +266,26 @@ void        parse_all(char *string, t_fill *fill)
 
 void        read_all(t_fill *fill)
 {
-    int i = -1;
+    // int i = -1;
     FILE *logger;
     read_input(fill);
 
     if (read_is_fin(fill->string, fill))
         parse_all(fill->string->str, fill);
-    while (++i < fill->m_h)
+    else
     {
         logger = fopen("filler.log", "a");
-        fprintf(logger, "%s\n", fill->map[i]);
+        fprintf(logger, "not read\n");
         fclose(logger);
     }
-    i = -1;
-    while (++i < fill->e_h)
-    {
-        logger = fopen("filler.log", "a");
-        fprintf(logger, "%s\n", fill->elem[i]);
-        fclose(logger);
-    }
+    // while (++i < fill->m_h)
+    // {
+    // }
+    // i = -1;
+    // while (++i < fill->e_h)
+    // {
+    //     logger = fopen("filler.log", "a");
+    //     fprintf(logger, "%s\n", fill->elem[i]);
+    //     fclose(logger);
+    // }
 }
