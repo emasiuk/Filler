@@ -284,9 +284,10 @@ void        read_all(t_fill *fill)
         parse_all(fill->string->str, fill);
     else
     {
-        logger = fopen("filler.log", "a");
-        fprintf(logger, "not read\n");
-        fclose(logger);
+        read_all(fill);
+        // logger = fopen("filler.log", "a");
+        // fprintf(logger, "not read\n");
+        // fclose(logger);
     }
     // while (++i < fill->m_h)
     // {
