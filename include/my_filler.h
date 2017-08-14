@@ -6,7 +6,7 @@
 # include <unistd.h>
 # include <string.h>
 # include <stdlib.h>
-# include "libft/libft.h"
+# include "../libft/libft.h"
 # define STDIN 0
 # define READ 0
 # define WRITE 1
@@ -33,6 +33,10 @@ typedef struct      s_fill
     int             status;
 }                   t_fill;
 
+t_str               *string_init();
+t_str               *string_create(char* str);
+void                add(t_str *ptr, char* str);
+void                string_append(t_str *ptr, char* str);
 void                free_struct(t_fill *fill);
 void                find_near_enemy(t_fill *fill);
 void                read_all(t_fill *fill);

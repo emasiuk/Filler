@@ -1,5 +1,5 @@
-#include "my_filler.h"
-#include "libft/libft.h"
+#include "../include/my_filler.h"
+#include "../libft/libft.h"
 //
 //void        find_near_enemy(t_fill *fill)
 //{
